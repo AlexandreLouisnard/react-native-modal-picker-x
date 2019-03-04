@@ -11,11 +11,13 @@ A Modal Picker for React Native, rendering correctly on both iOS and Android.
 ## USAGE
 
 ### Installation
+
 ```Command-line
 npm install --save react-native-modal-picker-x
 ```
 
 ### JSX
+
 ```JSX
 <ModalPicker
   items={[
@@ -38,6 +40,20 @@ npm install --save react-native-modal-picker-x
     return true;
   }}
 />
+```
+
+### Props
+
+```Javascript
+type Props = {
+	items: DataItem[],
+	selectedValue?: ?string,
+	onValueChange?: ?(item: DataItem) => boolean, // must return true to confirm the value change, false otherwise
+	disabled?: boolean,
+	containerStyle?: {},
+	buttonStyle?: {},
+	buttonTitleStyle?: {},
+};
 ```
 
 ## CHANGELOG

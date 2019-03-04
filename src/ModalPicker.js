@@ -13,9 +13,11 @@ type DataItem = { label: string, value: string };
 type Props = {
 	items: DataItem[],
 	selectedValue?: ?string,
-	containerStyle?: {},
 	onValueChange?: ?(item: DataItem) => boolean, // must return true to confirm the value change, false otherwise
 	disabled?: boolean,
+	containerStyle?: {},
+	buttonStyle?: {},
+	buttonTitleStyle?: {},
 };
 
 type State = {
@@ -48,14 +50,14 @@ const styles = StyleSheet.create({
 	},
 });
 
-const defaultProps = {
+const defProps = {
 	modalButton: {
 		type: 'clear',
-		buttonStyle: styles.modalButtonButton,
-		titleStyle: styles.modalButtonTitle,
 	},
 };
+/* #endregion */
 
+/* #region Utils */
 function getSafe<X>(fn: () => ?X /* object.nested.property */): ?X {
 	try {
 		const value: ?X = fn();
@@ -79,9 +81,11 @@ export default class ModalPicker extends Component<Props, State> {
 	/* #region Fields */
 	static defaultProps = {
 		selectedValue: null,
-		containerStyle: {},
 		onValueChange: null,
 		disabled: false,
+		containerStyle: {},
+		buttonStyle: {},
+		buttonTitleStyle: {},
 	};
 
 	/* #endregion */
@@ -111,7 +115,7 @@ export default class ModalPicker extends Component<Props, State> {
 
 	/* #region render() */
 	render() {
-		const { items, containerStyle, onValueChange, disabled } = this.props;
+		const { items, onValueChange, disabled, containerStyle, buttonStyle, buttonTitleStyle } = this.props;
 		const { selectedValue, iosModalVisible, iosModalSelectedValue } = this.state;
 
 		let selectedItem;
@@ -167,11 +171,13 @@ export default class ModalPicker extends Component<Props, State> {
 								</Picker>
 								<View style={{ flexDirection: 'row' }}>
 									<Button
-										{...defaultProps.modalButton}
+										{...defProps.modalButton}
+										buttonStyle={{ ...styles.modalButtonButton, buttonStyle }}
+										titleStyle={{ ...styles.modalButtonTitle, buttonTitleStyle }}
 										title="Cancel"
 										onPress={() => this.setState({ iosModalVisible: false })} />
 									<Button
-										{...defaultProps.modalButton}
+										{...defProps.modalButton}
 										title="OK"
 										onPress={() => {
 											this.setState({ iosModalVisible: false });
