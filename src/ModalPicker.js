@@ -4,7 +4,6 @@ import { KeyboardAvoidingView, Modal, Picker, Platform, StyleSheet, View } from 
 import React, { Component } from 'react';
 
 import { Button } from 'react-native-elements';
-import { ModalButton } from './ModalButton';
 
 /* #endregion */
 
@@ -16,6 +15,7 @@ type Props = {
 	selectedValue?: ?string,
 	containerStyle?: {},
 	onValueChange?: ?(item: DataItem) => boolean, // must return true to confirm the value change, false otherwise
+	disabled?: boolean,
 };
 
 type State = {
@@ -27,20 +27,34 @@ type State = {
 
 /* #region Consts */
 const styles = StyleSheet.create({
-	modalBackgroundView: {
+	modalContainerBackgroundView: {
 		flex: 1,
 		justifyContent: 'center',
 		alignItems: 'center',
 		backgroundColor: 'rgba(0,0,0,0.5)',
 	},
-	modalPopupView: {
+	modalContainerForegroundView: {
 		borderColor: 'black',
 		borderWidth: 2,
 		padding: 20,
 		margin: 20,
 		backgroundColor: '#F2F2F2',
 	},
+	modalButtonButton: {
+		marginLeft: 15,
+	},
+	modalButtonTitle: {
+		color: '#0000FF',
+	},
 });
+
+const defaultProps = {
+	modalButton: {
+		type: 'clear',
+		buttonStyle: styles.modalButtonButton,
+		titleStyle: styles.modalButtonTitle,
+	},
+};
 
 function getSafe<X>(fn: () => ?X /* object.nested.property */): ?X {
 	try {
@@ -67,6 +81,7 @@ export default class ModalPicker extends Component<Props, State> {
 		selectedValue: null,
 		containerStyle: {},
 		onValueChange: null,
+		disabled: false,
 	};
 
 	/* #endregion */
@@ -96,7 +111,7 @@ export default class ModalPicker extends Component<Props, State> {
 
 	/* #region render() */
 	render() {
-		const { items, containerStyle, onValueChange } = this.props;
+		const { items, containerStyle, onValueChange, disabled } = this.props;
 		const { selectedValue, iosModalVisible, iosModalSelectedValue } = this.state;
 
 		let selectedItem;
@@ -126,7 +141,8 @@ export default class ModalPicker extends Component<Props, State> {
 						buttonStyle={{ width: '100%', justifyContent: 'space-between' }}
 						onPress={() => {
 							this.setState({ iosModalVisible: true, iosModalSelectedValue: selectedValue });
-						}} />
+						}}
+						disabled={disabled} />
 					<Modal
 						visible={iosModalVisible}
 						animationType="fade"
@@ -134,8 +150,8 @@ export default class ModalPicker extends Component<Props, State> {
 						transparent>
 						<KeyboardAvoidingView
 							behavior={Platform.OS === 'ios' ? 'padding' : null}
-							style={styles.modalBackgroundView}>
-							<View style={styles.modalPopupView}>
+							style={styles.modalContainerBackgroundView}>
+							<View style={styles.modalContainerForegroundView}>
 								<Picker
 									selectedValue={iosModalSelectedValue}
 									onValueChange={(itemValue, itemPosition) => {
@@ -150,10 +166,12 @@ export default class ModalPicker extends Component<Props, State> {
 									))}
 								</Picker>
 								<View style={{ flexDirection: 'row' }}>
-									<ModalButton
+									<Button
+										{...defaultProps.modalButton}
 										title="Cancel"
 										onPress={() => this.setState({ iosModalVisible: false })} />
-									<ModalButton
+									<Button
+										{...defaultProps.modalButton}
 										title="OK"
 										onPress={() => {
 											this.setState({ iosModalVisible: false });
@@ -184,7 +202,8 @@ export default class ModalPicker extends Component<Props, State> {
 							// Update selected value if onValueChanged callback is not defined or has returned true
 							this.setState({ selectedValue: itemValue });
 						}
-					}}>
+					}}
+					enabled={!disabled}>
 					{items.map(({ label, value }) => (
 						<Picker.Item
 							label={label}
