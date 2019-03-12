@@ -201,7 +201,7 @@ export default class ModalPicker extends Component<Props, State> {
 		return (
 			<View style={containerStyle}>
 				<Picker
-					selectedValue={selectedItem.value}
+					selectedValue={selectedItem ? selectedItem.value : null}
 					onValueChange={(itemValue, itemPosition) => {
 						const newSelectedItem = items.filter(({ value }) => value === itemValue)[0];
 						if (!onValueChange || onValueChange(newSelectedItem)) {
