@@ -16,8 +16,8 @@ type Props = {
 	onValueChange?: ?(item: DataItem) => boolean, // must return true to confirm the value change, false otherwise
 	disabled?: boolean,
 	containerStyle?: {},
-	buttonStyle?: {},
-	buttonTitleStyle?: {},
+	iosModalButtonStyle?: {},
+	iosModalButtonTitleStyle?: {},
 };
 
 type State = {
@@ -84,8 +84,8 @@ export default class ModalPicker extends Component<Props, State> {
 		onValueChange: null,
 		disabled: false,
 		containerStyle: {},
-		buttonStyle: {},
-		buttonTitleStyle: {},
+		iosModalButtonStyle: {},
+		iosModalButtonTitleStyle: {},
 	};
 
 	/* #endregion */
@@ -115,7 +115,7 @@ export default class ModalPicker extends Component<Props, State> {
 
 	/* #region render() */
 	render() {
-		const { items, onValueChange, disabled, containerStyle, buttonStyle, buttonTitleStyle } = this.props;
+		const { items, onValueChange, disabled, containerStyle, iosModalButtonStyle, iosModalButtonTitleStyle } = this.props;
 		const { selectedValue, iosModalVisible, iosModalSelectedValue } = this.state;
 
 		let selectedItem;
@@ -172,8 +172,8 @@ export default class ModalPicker extends Component<Props, State> {
 								<View style={{ flexDirection: 'row' }}>
 									<Button
 										{...defProps.modalButton}
-										buttonStyle={{ ...styles.modalButtonButton, buttonStyle }}
-										titleStyle={{ ...styles.modalButtonTitle, buttonTitleStyle }}
+										buttonStyle={{ ...styles.modalButtonButton, iosModalButtonStyle }}
+										titleStyle={{ ...styles.modalButtonTitle, iosModalButtonTitleStyle }}
 										title="Cancel"
 										onPress={() => this.setState({ iosModalVisible: false })} />
 									<Button
@@ -199,25 +199,24 @@ export default class ModalPicker extends Component<Props, State> {
 
 		// For Android, return Picker directly
 		return (
-			<View style={containerStyle}>
-				<Picker
-					selectedValue={selectedItem ? selectedItem.value : null}
-					onValueChange={(itemValue, itemPosition) => {
-						const newSelectedItem = items.filter(({ value }) => value === itemValue)[0];
-						if (!onValueChange || onValueChange(newSelectedItem)) {
-							// Update selected value if onValueChanged callback is not defined or has returned true
-							this.setState({ selectedValue: itemValue });
-						}
-					}}
-					enabled={!disabled}>
-					{items.map(({ label, value }) => (
-						<Picker.Item
-							label={label}
-							value={value}
-							key={value} />
-					))}
-				</Picker>
-			</View>
+			<Picker
+				style={containerStyle}
+				selectedValue={selectedItem ? selectedItem.value : null}
+				onValueChange={(itemValue, itemPosition) => {
+					const newSelectedItem = items.filter(({ value }) => value === itemValue)[0];
+					if (!onValueChange || onValueChange(newSelectedItem)) {
+						// Update selected value if onValueChanged callback is not defined or has returned true
+						this.setState({ selectedValue: itemValue });
+					}
+				}}
+				enabled={!disabled}>
+				{items.map(({ label, value }) => (
+					<Picker.Item
+						label={label}
+						value={value}
+						key={value} />
+				))}
+			</Picker>
 		);
 	}
 	/* #endregion */
