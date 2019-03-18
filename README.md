@@ -51,8 +51,8 @@ type Props = {
 	onValueChange?: ?(item: DataItem) => boolean, // must return true to confirm the value change, false otherwise
 	disabled?: boolean,
 	containerStyle?: {},
-	buttonStyle?: {},
-	buttonTitleStyle?: {},
+	iosModalButtonStyle?: {},
+	iosModalButtonTitleStyle?: {},
 };
 ```
 
