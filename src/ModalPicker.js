@@ -171,12 +171,14 @@ export default class ModalPicker extends Component<Props, State> {
 								<View style={{ flexDirection: 'row' }}>
 									<Button
 										{...defProps.modalButton}
-										buttonStyle={{ ...styles.modalButtonButton, iosModalButtonStyle }}
-										titleStyle={{ ...styles.modalButtonTitle, iosModalButtonTitleStyle }}
+										buttonStyle={{ ...styles.modalButtonButton, ...iosModalButtonStyle }}
+										titleStyle={{ ...styles.modalButtonTitle, ...iosModalButtonTitleStyle }}
 										title="Cancel"
 										onPress={() => this.setState({ iosModalVisible: false })} />
 									<Button
 										{...defProps.modalButton}
+										buttonStyle={{ ...styles.modalButtonButton, ...iosModalButtonStyle }}
+										titleStyle={{ ...styles.modalButtonTitle, ...iosModalButtonTitleStyle }}
 										title="OK"
 										onPress={() => {
 											this.setState({ iosModalVisible: false });
