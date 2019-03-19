@@ -141,7 +141,6 @@ export default class ModalPicker extends Component<Props, State> {
 						iconRight
 						type="clear"
 						titleStyle={{ color: 'black', fontStyle: 'normal', fontWeight: 'normal' }}
-						containerStyle={{ borderBottomWidth: 1 }}
 						buttonStyle={{ width: '100%', justifyContent: 'space-between' }}
 						onPress={() => {
 							this.setState({ iosModalVisible: true, iosModalSelectedValue: selectedValue });
