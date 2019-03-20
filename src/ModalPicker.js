@@ -168,7 +168,7 @@ export default class ModalPicker extends Component<Props, State> {
 											key={value} />
 									))}
 								</Picker>
-								<View style={{ flexDirection: 'row' }}>
+								<View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
 									<Button
 										{...defProps.modalButton}
 										buttonStyle={{ ...styles.modalButtonButton, ...iosModalButtonStyle }}
