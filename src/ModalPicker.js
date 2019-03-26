@@ -115,7 +115,8 @@ export default class ModalPicker extends Component<Props, State> {
 
 	/* #region render() */
 	render() {
-		const { items, onValueChange, disabled, containerStyle, iosModalButtonStyle, iosModalButtonTitleStyle } = this.props;
+		const { items, onValueChange, disabled, iosModalButtonStyle, iosModalButtonTitleStyle } = this.props;
+		let { containerStyle } = this.props;
 		const { selectedValue, iosModalVisible, iosModalSelectedValue } = this.state;
 
 		let selectedItem;
@@ -127,6 +128,8 @@ export default class ModalPicker extends Component<Props, State> {
 		} else {
 			selectedItem = undefined;
 		}
+
+		containerStyle = { height: 44, borderWidth: 1, borderColor: 'lightgray', ...containerStyle };
 
 		if (Platform.OS === 'ios') {
 			// For iOS, return a Button that opens a Picker in a Modal (because iOS picker is multiline)
@@ -141,7 +144,7 @@ export default class ModalPicker extends Component<Props, State> {
 						iconRight
 						type="clear"
 						titleStyle={{ color: 'black', fontStyle: 'normal', fontWeight: 'normal' }}
-						buttonStyle={{ width: '100%', justifyContent: 'space-between' }}
+						buttonStyle={{ height: 42, width: '100%', justifyContent: 'space-between' }}
 						onPress={() => {
 							this.setState({ iosModalVisible: true, iosModalSelectedValue: selectedValue });
 						}}
@@ -200,24 +203,26 @@ export default class ModalPicker extends Component<Props, State> {
 
 		// For Android, return Picker directly
 		return (
-			<Picker
-				style={containerStyle}
-				selectedValue={selectedItem ? selectedItem.value : null}
-				onValueChange={(itemValue, itemPosition) => {
-					const newSelectedItem = items.filter(({ value }) => value === itemValue)[0];
-					if (!onValueChange || onValueChange(newSelectedItem)) {
-						// Update selected value if onValueChanged callback is not defined or has returned true
-						this.setState({ selectedValue: itemValue });
-					}
-				}}
-				enabled={!disabled}>
-				{items.map(({ label, value }) => (
-					<Picker.Item
-						label={label}
-						value={value}
-						key={value} />
-				))}
-			</Picker>
+			<View style={containerStyle}>
+				<Picker
+					style={{ height: 42 }}
+					selectedValue={selectedItem ? selectedItem.value : null}
+					onValueChange={(itemValue, itemPosition) => {
+						const newSelectedItem = items.filter(({ value }) => value === itemValue)[0];
+						if (!onValueChange || onValueChange(newSelectedItem)) {
+							// Update selected value if onValueChanged callback is not defined or has returned true
+							this.setState({ selectedValue: itemValue });
+						}
+					}}
+					enabled={!disabled}>
+					{items.map(({ label, value }) => (
+						<Picker.Item
+							label={label}
+							value={value}
+							key={value} />
+					))}
+				</Picker>
+			</View>
 		);
 	}
 	/* #endregion */
