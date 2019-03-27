@@ -8,7 +8,7 @@ import { Button } from 'react-native-elements';
 /* #endregion */
 
 /* #region Flow typing */
-type DataItem = { label: string, value: string };
+type DataItem = { label: ?string, value: ?string };
 
 type Props = {
 	items: DataItem[],
@@ -58,14 +58,7 @@ const defProps = {
 /* #endregion */
 
 /* #region Utils */
-function getSafe<X>(fn: () => ?X /* object.nested.property */): ?X {
-	try {
-		const value: ?X = fn();
-		return value;
-	} catch (e) {
-		return undefined;
-	}
-}
+const get: (object: any, pathToNestedProperty: (string | number)[], defaultValue?: any) => any = (object, pathToNestedProperty, defaultValue = undefined) => pathToNestedProperty.reduce((xs, x) => (xs && xs[x] ? xs[x] : defaultValue), object);
 /* #endregion */
 
 /**
@@ -136,7 +129,7 @@ export default class ModalPicker extends Component<Props, State> {
 			return (
 				<View style={containerStyle}>
 					<Button
-						title={getSafe(() => selectedItem.label) || ''}
+						title={get(selectedItem, ['label'], '')}
 						icon={{
 							name: 'arrow-drop-down',
 							color: 'gray',
@@ -166,7 +159,7 @@ export default class ModalPicker extends Component<Props, State> {
 									style={{ width: 200 }}>
 									{items.map(({ label, value }) => (
 										<Picker.Item
-											label={label}
+											label={label || ''}
 											value={value}
 											key={value} />
 									))}
@@ -217,7 +210,7 @@ export default class ModalPicker extends Component<Props, State> {
 					enabled={!disabled}>
 					{items.map(({ label, value }) => (
 						<Picker.Item
-							label={label}
+							label={label || ''}
 							value={value}
 							key={value} />
 					))}
