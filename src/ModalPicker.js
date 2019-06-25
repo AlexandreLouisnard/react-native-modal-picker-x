@@ -2,10 +2,9 @@
 
 import * as Utils from '..';
 
-import { Dimensions, KeyboardAvoidingView, Modal, Picker, Platform, StatusBar, StyleSheet, View } from 'react-native';
+import { Button, Icon } from 'react-native-elements';
+import { Dimensions, KeyboardAvoidingView, Modal, Picker, Platform, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import React, { Component } from 'react';
-
-import { Button } from 'react-native-elements';
 
 /* #endregion */
 
@@ -39,12 +38,12 @@ const styles = StyleSheet.create({
 		justifyContent: 'center',
 		alignItems: 'center',
 		backgroundColor: 'rgba(0,0,0,0.5)',
+		padding: 20,
 	},
 	modalContainerForegroundView: {
 		borderColor: 'black',
 		borderWidth: 2,
 		padding: 20,
-		margin: 20,
 		backgroundColor: '#F2F2F2',
 	},
 	modalButtonButton: {
@@ -94,6 +93,8 @@ export default class ModalPicker extends Component<Props, State> {
 		iosModalButtonStyle: {},
 		iosModalButtonTitleStyle: {},
 		iosModalItemStyle: {},
+		iosOkButtonText: 'OK',
+		iosCancelButtonText: 'CANCEL',
 	};
 
 	/* #endregion */
@@ -123,8 +124,7 @@ export default class ModalPicker extends Component<Props, State> {
 
 	/* #region render() */
 	render() {
-		const { items, onValueChange, disabled, iosModalButtonStyle, iosModalButtonTitleStyle, iosModalItemStyle, iosOkButtonText, iosCancelButtonText } = this.props;
-		let { containerStyle } = this.props;
+		const { items, onValueChange, containerStyle, disabled, iosModalButtonStyle, iosModalButtonTitleStyle, iosModalItemStyle, iosOkButtonText, iosCancelButtonText } = this.props;
 		const { selectedValue, iosModalVisible, iosModalSelectedValue } = this.state;
 		const { screenHeight, screenWidth, toolbarHeight } = getScreenDimensions();
 
@@ -138,28 +138,36 @@ export default class ModalPicker extends Component<Props, State> {
 			selectedItem = undefined;
 		}
 
-		containerStyle = { height: 44, borderWidth: 1, borderColor: 'lightgray', ...containerStyle };
-
-		const magicHeightForIOsPicker = Math.min(items.length * 44, screenHeight * 0.8);
-
 		if (Platform.OS === 'ios') {
 			// For iOS, return a Button that opens a Picker in a Modal (because iOS picker is multiline)
-			return (
-				<View style={containerStyle}>
-					<Button
-						title={get(selectedItem, ['label'], '')}
-						icon={{
-							name: 'arrow-drop-down',
-							color: 'gray',
-						}}
-						iconRight
-						type="clear"
-						titleStyle={{ color: 'black', fontStyle: 'normal', fontWeight: 'normal' }}
-						buttonStyle={{ height: 42, width: '100%', justifyContent: 'space-between' }}
+			const magicHeightForIOsPicker = Math.min(items.length * 44, screenHeight * 0.8);
+			let pickerView = (
+				<View style={{ minHeight: 44, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', borderWidth: 1, borderColor: 'lightgray', ...containerStyle }}>
+					<Text style={{ textAlignVertical: 'center', width: '85%', color: disabled ? 'gray' : 'black' }}>{get(selectedItem, ['label'], '')}</Text>
+					<Icon
+						name="arrow-drop-down"
+						color="gray" />
+				</View>
+			);
+
+			if (!disabled) {
+				pickerView = (
+					<TouchableOpacity
 						onPress={() => {
+							if (disabled) {
+								return;
+							}
 							this.setState({ iosModalVisible: true, iosModalSelectedValue: selectedValue });
-						}}
-						disabled={disabled} />
+						}}>
+						{pickerView}
+					</TouchableOpacity>
+				);
+			}
+			return (
+				<View>
+
+					{pickerView}
+
 					<Modal
 						visible={iosModalVisible}
 						animationType="fade"
@@ -188,13 +196,13 @@ export default class ModalPicker extends Component<Props, State> {
 										{...defProps.modalButton}
 										buttonStyle={{ ...styles.modalButtonButton, ...iosModalButtonStyle }}
 										titleStyle={{ ...styles.modalButtonTitle, ...iosModalButtonTitleStyle }}
-										title={iosCancelButtonText || "Cancel"}
+										title={iosCancelButtonText}
 										onPress={() => this.setState({ iosModalVisible: false })} />
 									<Button
 										{...defProps.modalButton}
 										buttonStyle={{ ...styles.modalButtonButton, ...iosModalButtonStyle }}
 										titleStyle={{ ...styles.modalButtonTitle, ...iosModalButtonTitleStyle }}
-										title={iosOkButtonText || "OK"}
+										title={iosOkButtonText}
 										onPress={() => {
 											this.setState({ iosModalVisible: false });
 											if (iosModalSelectedValue !== selectedValue) {
@@ -215,7 +223,7 @@ export default class ModalPicker extends Component<Props, State> {
 
 		// For Android, return Picker directly
 		return (
-			<View style={containerStyle}>
+			<View style={{ minHeight: 44, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', borderWidth: 1, borderColor: 'lightgray', ...containerStyle }}>
 				<Picker
 					style={{ height: 42 }}
 					selectedValue={selectedItem ? selectedItem.value : null}
