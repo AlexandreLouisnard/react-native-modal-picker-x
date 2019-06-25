@@ -1,6 +1,6 @@
 {
   "name": "react-native-modal-picker-x",
-  "version": "1.0.15",
+  "version": "1.0.16",
   "description": "A Modal Picker for React Native, rendering correctly on both iOS and Android.",
   "main": "index.js",
   "scripts": {

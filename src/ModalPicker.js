@@ -1,6 +1,8 @@
 /* #region Imports */
 
-import { KeyboardAvoidingView, Modal, Picker, Platform, StyleSheet, View } from 'react-native';
+import * as Utils from '..';
+
+import { Dimensions, KeyboardAvoidingView, Modal, Picker, Platform, StatusBar, StyleSheet, View } from 'react-native';
 import React, { Component } from 'react';
 
 import { Button } from 'react-native-elements';
@@ -18,6 +20,9 @@ type Props = {
 	containerStyle?: {},
 	iosModalButtonStyle?: {},
 	iosModalButtonTitleStyle?: {},
+	iosModalItemStyle?: {},
+	iosOkButtonText?: string,
+	iosCancelButtonText?: string,
 };
 
 type State = {
@@ -59,6 +64,15 @@ const defProps = {
 
 /* #region Utils */
 const get: (object: any, pathToNestedProperty: (string | number)[], defaultValue?: any) => any = (object, pathToNestedProperty, defaultValue = undefined) => pathToNestedProperty.reduce((xs, x) => (xs && xs[x] ? xs[x] : defaultValue), object);
+
+function getScreenDimensions(): { screenHeight: number, screenWidth: number, headerHeight: number, toolbarHeight: number } {
+	const { height, width } = Dimensions.get('window');
+
+	const toolbarHeight = StatusBar.currentHeight || 20;
+	// const headerHeight = Platform.OS === 'ios' ? Header.HEIGHT - toolbarHeight : Header.HEIGHT;
+
+	return { screenHeight: height, screenWidth: width, /* headerHeight,  */ toolbarHeight };
+}
 /* #endregion */
 
 /**
@@ -79,6 +93,7 @@ export default class ModalPicker extends Component<Props, State> {
 		containerStyle: {},
 		iosModalButtonStyle: {},
 		iosModalButtonTitleStyle: {},
+		iosModalItemStyle: {},
 	};
 
 	/* #endregion */
@@ -108,9 +123,10 @@ export default class ModalPicker extends Component<Props, State> {
 
 	/* #region render() */
 	render() {
-		const { items, onValueChange, disabled, iosModalButtonStyle, iosModalButtonTitleStyle } = this.props;
+		const { items, onValueChange, disabled, iosModalButtonStyle, iosModalButtonTitleStyle, iosModalItemStyle, iosOkButtonText, iosCancelButtonText } = this.props;
 		let { containerStyle } = this.props;
 		const { selectedValue, iosModalVisible, iosModalSelectedValue } = this.state;
+		const { screenHeight, screenWidth, toolbarHeight } = getScreenDimensions();
 
 		let selectedItem;
 		const found = items.filter(({ value }) => value === selectedValue);
@@ -123,6 +139,8 @@ export default class ModalPicker extends Component<Props, State> {
 		}
 
 		containerStyle = { height: 44, borderWidth: 1, borderColor: 'lightgray', ...containerStyle };
+
+		const magicHeightForIOsPicker = Math.min(items.length * 44, screenHeight * 0.8);
 
 		if (Platform.OS === 'ios') {
 			// For iOS, return a Button that opens a Picker in a Modal (because iOS picker is multiline)
@@ -156,7 +174,8 @@ export default class ModalPicker extends Component<Props, State> {
 									onValueChange={(itemValue, itemPosition) => {
 										this.setState({ iosModalSelectedValue: itemValue });
 									}}
-									style={{ width: 200 }}>
+									style={{ width: 0.95 * screenWidth, marginTop: -0.2 * magicHeightForIOsPicker, marginBottom: -0.15 * magicHeightForIOsPicker }}
+									itemStyle={{ height: magicHeightForIOsPicker, ...iosModalItemStyle }}>
 									{items.map(({ label, value }) => (
 										<Picker.Item
 											label={label || ''}
@@ -169,13 +188,13 @@ export default class ModalPicker extends Component<Props, State> {
 										{...defProps.modalButton}
 										buttonStyle={{ ...styles.modalButtonButton, ...iosModalButtonStyle }}
 										titleStyle={{ ...styles.modalButtonTitle, ...iosModalButtonTitleStyle }}
-										title="Cancel"
+										title={iosCancelButtonText || "Cancel"}
 										onPress={() => this.setState({ iosModalVisible: false })} />
 									<Button
 										{...defProps.modalButton}
 										buttonStyle={{ ...styles.modalButtonButton, ...iosModalButtonStyle }}
 										titleStyle={{ ...styles.modalButtonTitle, ...iosModalButtonTitleStyle }}
-										title="OK"
+										title={iosOkButtonText || "OK"}
 										onPress={() => {
 											this.setState({ iosModalVisible: false });
 											if (iosModalSelectedValue !== selectedValue) {
