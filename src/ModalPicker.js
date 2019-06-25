@@ -223,7 +223,7 @@ export default class ModalPicker extends Component<Props, State> {
 
 		// For Android, return Picker directly
 		return (
-			<View style={{ minHeight: 44, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', borderWidth: 1, borderColor: 'lightgray', ...containerStyle }}>
+			<View style={{ height: 44, borderWidth: 1, borderColor: 'lightgray', ...containerStyle }}>
 				<Picker
 					style={{ height: 42 }}
 					selectedValue={selectedItem ? selectedItem.value : null}
