@@ -39,20 +39,40 @@ npm install --save react-native-modal-picker-x
     this.setState({ pickerModalValue: value });
     return true;
   }}
-/>
+  iosModalButtonTitleStyle={{ color: 'blue' }}
+  iosModalItemStyle={{ fontSize: 14, textAlign: 'left' }}
+  iosOkButtonText={'OK'}
+  iosCancelButtonText={'Annuler'} />
 ```
 
 ### Props
 
 ```Javascript
+type DataItem = { label: ?string, value: ?string };
+
 type Props = {
-	items: DataItem[],
-	selectedValue?: ?string,
-	onValueChange?: ?(item: DataItem) => boolean, // must return true to confirm the value change, false otherwise
-	disabled?: boolean,
-	containerStyle?: {},
-	iosModalButtonStyle?: {},
-	iosModalButtonTitleStyle?: {},
+  items: DataItem[],
+  selectedValue?: ?string,
+  onValueChange?: ?(item: DataItem) => boolean, // must return true to confirm the value change, false otherwise
+  disabled?: boolean,
+  containerStyle?: {},
+  iosModalButtonStyle?: {},
+  iosModalButtonTitleStyle?: {},
+  iosModalItemStyle?: {},
+  iosOkButtonText?: string,
+  iosCancelButtonText?: string,
+};
+
+static defaultProps = {
+  selectedValue: null,
+  onValueChange: null,
+  disabled: false,
+  containerStyle: {},
+  iosModalButtonStyle: {},
+  iosModalButtonTitleStyle: {},
+  iosModalItemStyle: {},
+  iosOkButtonText: 'OK',
+  iosCancelButtonText: 'CANCEL',
 };
 ```
 
